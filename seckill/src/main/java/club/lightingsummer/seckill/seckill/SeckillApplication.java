@@ -1,9 +1,11 @@
 package club.lightingsummer.seckill.seckill;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
+@MapperScan("club.lightingsummer.seckill.seckill.dao")
 public class SeckillApplication {
 
     public static void main(String[] args) {
