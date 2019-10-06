@@ -4,10 +4,12 @@ import club.lightingsummer.seckill.seckill.dao.GoodMapper;
 import club.lightingsummer.seckill.seckill.dao.RecordMapper;
 import club.lightingsummer.seckill.seckill.dto.Exposer;
 import club.lightingsummer.seckill.seckill.dto.SeckillExecution;
+import club.lightingsummer.seckill.seckill.enums.SeckillStateEnum;
 import club.lightingsummer.seckill.seckill.exception.RepeatKillException;
 import club.lightingsummer.seckill.seckill.exception.SeckillCloseException;
 import club.lightingsummer.seckill.seckill.exception.SeckillException;
 import club.lightingsummer.seckill.seckill.model.Good;
+import club.lightingsummer.seckill.seckill.model.Record;
 import club.lightingsummer.seckill.seckill.service.SeckillService;
 import com.github.pagehelper.PageHelper;
 import org.slf4j.Logger;
@@ -71,7 +73,33 @@ public class SeckillServiceImpl implements SeckillService {
     }
 
     @Override
-    public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5) throws SeckillException, SeckillCloseException, RepeatKillException {
-        return null;
+    public SeckillExecution executeSeckill(long seckillId, long userPhone, String md5)
+            throws SeckillException, SeckillCloseException, RepeatKillException {
+        if (md5 == null || !md5.equals(getMD5(seckillId))) {
+            throw new SeckillException("seckill data rewrite");
+        }
+        Date now = new Date();
+        try {
+            int updateCnt = goodMapper.reduceNumber(seckillId, now);
+            if (updateCnt <= 0) {
+                throw new SeckillCloseException("seckill close");
+            } else {
+                // 记录秒杀记录
+                int insertCnt = recordMapper.insertSuccessKilled(seckillId, userPhone);
+                if (insertCnt <= 0) {
+                    throw new RepeatKillException("seckill repeated");
+                } else {
+                    Record record = recordMapper.selectById(seckillId);
+                    return new SeckillExecution(seckillId, SeckillStateEnum.SUCCESS, record);
+                }
+            }
+        } catch (SeckillCloseException e1) {
+            throw e1;
+        } catch (RepeatKillException e2) {
+            throw e2;
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new SeckillException("seckill error :" + e.getMessage());
+        }
     }
 }

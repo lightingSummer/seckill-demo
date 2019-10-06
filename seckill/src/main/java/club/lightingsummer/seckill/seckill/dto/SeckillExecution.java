@@ -1,5 +1,6 @@
 package club.lightingsummer.seckill.seckill.dto;
 
+import club.lightingsummer.seckill.seckill.enums.SeckillStateEnum;
 import club.lightingsummer.seckill.seckill.model.Record;
 
 /**
@@ -17,17 +18,17 @@ public class SeckillExecution {
     // 秒杀记录
     private Record record;
 
-    public SeckillExecution(long seckillId, int state, String stateInfo, Record record) {
+    public SeckillExecution(long seckillId, SeckillStateEnum seckillStateEnum, Record record) {
         this.seckillId = seckillId;
-        this.state = state;
-        this.stateInfo = stateInfo;
+        this.state = seckillStateEnum.getState();
+        this.stateInfo = seckillStateEnum.getStateInfo();
         this.record = record;
     }
 
-    public SeckillExecution(long seckillId, int state, String stateInfo) {
+    public SeckillExecution(long seckillId, SeckillStateEnum seckillStateEnum) {
         this.seckillId = seckillId;
-        this.state = state;
-        this.stateInfo = stateInfo;
+        this.state = seckillStateEnum.getState();
+        this.stateInfo = seckillStateEnum.getStateInfo();
     }
 
     public long getSeckillId() {
