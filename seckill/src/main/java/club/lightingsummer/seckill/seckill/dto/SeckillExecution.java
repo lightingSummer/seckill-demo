@@ -62,4 +62,14 @@ public class SeckillExecution {
     public void setRecord(Record record) {
         this.record = record;
     }
+
+    @Override
+    public String toString() {
+        return "SeckillExecution{" +
+                "seckillId=" + seckillId +
+                ", state=" + state +
+                ", stateInfo='" + stateInfo + '\'' +
+                ", record=" + record +
+                '}';
+    }
 }
